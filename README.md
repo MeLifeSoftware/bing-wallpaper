@@ -78,7 +78,7 @@
 ```bash
 git clone https://github.com/jadepeng/bing-wallpaper.git
 
-````
+​````
 
  - Open .sln file in Visual Studio
 
@@ -99,3 +99,6 @@ git clone https://github.com/jadepeng/bing-wallpaper.git
 仅支持Windows
 
 已在win10 X64测试，有问题请反馈!
+
+```
+

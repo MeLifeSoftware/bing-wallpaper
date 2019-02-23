@@ -89,6 +89,18 @@ namespace BingWallpaper
             }
         }
 
+        public bool ShowDeskWidget 
+        {
+            get { return _options.ShowDeskWidgets; }
+            set 
+            {
+                _options.ShowDeskWidgets = value;
+                Save();
+                
+            }
+        }
+
+
         #endregion
 
         private void Save()
@@ -114,6 +126,8 @@ namespace BingWallpaper
             public string ImgCopyrightLink = "https://www.bing.com";
             [DataMember]
             public string AutoChangeInterval = "1小时";
+            [DataMember]
+            public bool ShowDeskWidgets = false;
         }
     }
 }

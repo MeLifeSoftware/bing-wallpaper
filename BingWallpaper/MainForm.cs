@@ -16,6 +16,7 @@ namespace BingWallpaper
         private BingImageProvider _provider;
         private Settings _settings;
         private HistoryImage _currentWallpaper;
+        private DeskWidget _deskWidget;
         string CURRENT_FILE_CACHE = "current.img";
 
 
@@ -23,12 +24,10 @@ namespace BingWallpaper
 
         #region 控制Interface
 
-        public HistoryImage CurrentWallpaper
-        {
+        public HistoryImage CurrentWallpaper {
             get { return _currentWallpaper; }
 
-            set
-            {
+            set {
                 this._currentWallpaper = value;
                 this.WallpaperChange(value);
                 this.SaveState();
@@ -80,7 +79,7 @@ namespace BingWallpaper
         private void ReloadState()
         {
             var image = HistoryImage.LoadFromFile(CURRENT_FILE_CACHE);
-            if(image!= null)
+            if (image != null)
             {
                 this.CurrentWallpaper = image;
             }
@@ -132,10 +131,16 @@ namespace BingWallpaper
 
             }).Start();
 
-         
+
 
             // open Desk Widget
-            new DeskWidget(this).Show();
+            _deskWidget = new DeskWidget(this);
+
+            if (_settings.ShowDeskWidget)
+            {
+                _deskWidget.Show();
+            }
+
 
             // 
             new Thread(() =>
@@ -204,11 +209,11 @@ namespace BingWallpaper
                 // 保存到历史记录
                 HistoryImageProvider.AddImage(historyImage);
 
-            
+
             }
             catch
             {
-                historyImage = HistoryImageProvider.getRandom();           
+                historyImage = HistoryImageProvider.getRandom();
             }
             if (historyImage != null)
             {
@@ -325,8 +330,13 @@ namespace BingWallpaper
             launch.Checked = _settings.LaunchOnStartup;
             launch.Click += OnStartupLaunch;
             _trayMenu.MenuItems.Add(launch);
-
             _trayMenu.MenuItems.Add(Resource.UpdateDB, (s, e) => UpdateLocalData());
+
+
+            var showDeskWidget = new MenuItem(Resource.ShowDeskWidget);
+            showDeskWidget.Checked = _settings.ShowDeskWidget;
+            showDeskWidget.Click += ShowDeskWidget;
+            _trayMenu.MenuItems.Add(showDeskWidget);
 
 
             var timerChange = new MenuItem(Resource.IntervalChange);
@@ -368,6 +378,14 @@ namespace BingWallpaper
             // Add menu to tray icon and show it.
             _trayIcon.ContextMenu = _trayMenu;
             _trayIcon.Visible = true;
+        }
+
+        private void ShowDeskWidget(object sender, EventArgs e)
+        {
+            var showDeskWidget = (MenuItem)sender;
+            showDeskWidget.Checked = !showDeskWidget.Checked;
+            _settings.ShowDeskWidget = showDeskWidget.Checked;
+            _deskWidget.Visible = showDeskWidget.Checked;
         }
 
         private void UpdateLocalData()
